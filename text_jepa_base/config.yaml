@@ -1,0 +1,53 @@
+# config.yaml
+
+# -- Data Parameters --
+data:
+  path: "path/to/your/text/data"  # Path to a directory of .txt files or a single .txt file
+  vocab_size: 32000               # Vocabulary size for the tokenizer
+  max_length: 256                 # Maximum sequence length
+  mask_ratio: 0.6                 # Percentage of tokens to mask
+  mask_block_size: 16             # Size of each continuous block to be masked
+
+# -- Model Parameters (Text-JEPA Base) --
+model:
+  embed_dim: 768                  # Embedding dimension
+  # Context Encoder (the student)
+  context_encoder:
+    depth: 12                     # Number of transformer layers
+    num_heads: 12                 # Number of attention heads
+    mlp_ratio: 4.0                # Ratio for the MLP hidden dimension
+  # Target Encoder (the teacher) - typically same as context encoder
+  target_encoder:
+    depth: 12
+    num_heads: 12
+    mlp_ratio: 4.0
+  # Predictor (smaller, lighter network)
+  predictor:
+    depth: 4
+    num_heads: 8
+    mlp_ratio: 4.0
+  # Target encoder momentum for EMA updates
+  momentum: 0.996
+
+# -- Training Parameters --
+training:
+  device: "cuda"                  # "cuda" or "cpu"
+  epochs: 100
+  batch_size: 128
+  learning_rate: 0.0005
+  weight_decay: 0.05
+  optimizer: "AdamW"              # AdamW is recommended
+  scheduler: "CosineAnnealingLR"  # Learning rate scheduler
+  warmup_epochs: 5                # Warmup period for the scheduler
+  gradient_clipping: 1.0          # Max norm for gradient clipping
+  use_amp: true                   # Use Automatic Mixed Precision (for performance)
+
+# -- Logging & Checkpointing --
+logging:
+  log_interval: 50                # Log every N batches
+  checkpoint_dir: "./checkpoints" # Directory to save model checkpoints
+  best_model_name: "best_t_jepa_model.pth"
+
+# -- Reproducibility --
+system:
+  seed: 42
